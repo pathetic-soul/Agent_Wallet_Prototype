@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
 from app.config import get_settings
+from app.services.telemetry import TelemetryLog
 
 
 def create_app() -> FastAPI:
@@ -12,6 +13,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
         description="ERC-4337 relay and event API for the Agent Wallet prototype.",
     )
+    app.state.telemetry = TelemetryLog()
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,

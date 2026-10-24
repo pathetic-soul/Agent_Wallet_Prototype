@@ -114,4 +114,78 @@ class PublicConfig(BaseModel):
     chain_name: str
     entry_point_address: str | None
     wallet_factory_address: str | None
+    wallet_address: str | None = None
+    owner_signer_enabled: bool = False
+    attack_console_enabled: bool = False
     backend_configured: bool
+
+
+class PendingCall(BaseModel):
+    target: str
+    value: str
+    data: str
+    selector: str
+
+
+class PendingRequestView(BaseModel):
+    id: int
+    agent: str
+    status: Literal["none", "open", "approved", "rejected", "expired"]
+    reason: Literal["over_per_transaction_limit", "over_daily_limit", "pricing_failed"]
+    usd_value: str
+    created_at: int
+    expires_at: int
+    calls: list[PendingCall]
+
+
+class WalletSummary(BaseModel):
+    address: str
+    owner: str
+    paused: bool
+    per_transaction_limit_usd: str
+    daily_limit_usd: str
+    spent_in_window_usd: str
+    next_pending_id: int
+
+
+class OwnerActionResponse(BaseModel):
+    transaction_hash: str
+
+
+UsdAmount = Annotated[str, Field(pattern=r"^\d{1,9}(\.\d{1,2})?$")]
+
+
+class PauseRequest(BaseModel):
+    paused: bool
+
+
+class AgentRequest(BaseModel):
+    agent: Address
+
+
+class SessionRequest(BaseModel):
+    agent: Address
+    valid_for_seconds: int = Field(ge=60, le=30 * 24 * 3600)
+
+
+class SpendPolicyRequest(BaseModel):
+    per_transaction_usd: UsdAmount
+    daily_usd: UsdAmount
+
+
+class CallPolicyRequest(BaseModel):
+    target: Address
+    selector: str = Field(pattern=r"^0x[0-9a-fA-F]{8}$")
+    allowed: bool
+
+
+class RecipientPolicyRequest(BaseModel):
+    recipient: Address
+    allowed: bool
+
+
+class AttackResult(BaseModel):
+    attack: str
+    outcome: Literal["blocked", "executed"]
+    reason: str | None
+    user_operation_hash: str | None

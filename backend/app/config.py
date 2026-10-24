@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Annotated
 
-from pydantic import BeforeValidator, Field, HttpUrl, field_validator
+from pydantic import BeforeValidator, Field, HttpUrl, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     bundler_rpc_url: OptionalUrl = None
     entry_point_address: str | None = None
     wallet_factory_address: str | None = None
+    wallet_address: str | None = None
+    # Local demos only: lets the API relay owner approve/reject calls. Leave empty everywhere else.
+    demo_owner_private_key: Annotated[SecretStr | None, BeforeValidator(_empty_to_none)] = None
+    # Local demos only: let the attack console sign as the agent and as an unauthorised attacker.
+    demo_agent_private_key: Annotated[SecretStr | None, BeforeValidator(_empty_to_none)] = None
+    demo_attacker_private_key: Annotated[SecretStr | None, BeforeValidator(_empty_to_none)] = None
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -39,7 +45,7 @@ class Settings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
-    @field_validator("entry_point_address", "wallet_factory_address", mode="before")
+    @field_validator("entry_point_address", "wallet_factory_address", "wallet_address", mode="before")
     @classmethod
     def normalize_optional_address(cls, value: object) -> object:
         if value == "":
@@ -54,6 +60,10 @@ class Settings(BaseSettings):
         except ValueError as exc:
             raise ValueError("must contain valid hexadecimal characters") from exc
         return text
+
+    @property
+    def attack_console_enabled(self) -> bool:
+        return all((self.demo_agent_private_key, self.demo_attacker_private_key, self.wallet_address, self.rpc_url, self.bundler_rpc_url, self.entry_point_address))
 
     @property
     def configured(self) -> bool:

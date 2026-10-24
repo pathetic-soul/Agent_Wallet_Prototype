@@ -23,6 +23,9 @@ async def test_config_exposes_only_public_values(api_client):
         "chain_name": "Base Sepolia",
         "entry_point_address": "0x0000000071727de22e5e9d8baf0edac6f37da032",
         "wallet_factory_address": "0x1111111111111111111111111111111111111111",
+        "wallet_address": None,
+        "owner_signer_enabled": False,
+        "attack_console_enabled": False,
         "backend_configured": True,
     }
     assert "rpc_url" not in response.json()
