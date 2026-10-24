@@ -1,0 +1,7 @@
+import { ArrowUpRight, Code2, KeyRound, Repeat2, Shield, Ticket, Users } from 'lucide-react';
+import { StatusBadge } from './StatusBadge.jsx';
+
+const iconMap = { ticket: Ticket, shield: Shield, key: KeyRound, code: Code2, repeat: Repeat2, users: Users };
+export function ActivityTable({ items, compact = false }) {
+  return <div className="table-wrap"><table className="activity-table"><thead><tr><th>TIME</th><th>ACTION</th><th>USD</th><th>STATUS</th><th>RESULT</th></tr></thead><tbody>{items.length === 0 && <tr><td colSpan={5} className="muted">No events yet.</td></tr>}{items.map((item, index) => { const Icon = iconMap[item.icon] || Shield; return <tr key={item.key ?? `${item.time}-${index}`}><td className="mono muted">{item.time}</td><td><div className="action-cell"><span className={`action-icon action-${item.status.toLowerCase()}`}><Icon size={15}/></span><div><strong>{item.title}</strong><small>{item.detail}</small></div></div></td><td className="mono amount-cell">{item.amount}</td><td><StatusBadge status={item.status}/></td><td className={`result-cell ${item.status === 'Blocked' ? 'text-red' : item.status === 'Pending' ? 'text-amber' : 'text-blue'}`}>{item.result}{item.result.includes('↗') && <ArrowUpRight size={12}/>}</td></tr>; })}</tbody></table>{compact && <div className="table-foot">Showing {items.length} events <span>·</span> Rebuilt from wallet logs; blocked attempts come from the API's in-memory relay log</div>}</div>;
+}

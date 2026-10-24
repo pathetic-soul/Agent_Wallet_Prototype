@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Vite / build output
+dist/
+dist-ssr/
+*.local
+
+# Environment files (keep .env.example as documentation)
+.env
+.env.*
+!.env.example
+
+# Logs and diagnostic output
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

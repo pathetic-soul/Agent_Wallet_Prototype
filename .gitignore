@@ -1,24 +1,81 @@
+# ── Secrets and local configuration ─────────────────────────────
+# Real values live only in these files. Commit .env.example instead.
 .env
-.venv/
-__pycache__/
-.pytest_cache/
-*.py[cod]
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+keystore/
+secrets/
+.secrets/
+credentials*.json
 
+# ── Local-demo state (anvil keys are public, but deployments are machine-specific)
+demo/deployments.local.json
+.tools/
+anvil-state.json
+
+# ── Python ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*-test-results.xml
+
+# ── Node / frontend ─────────────────────────────────────────────
 node_modules/
+dist/
+dist-ssr/
+coverage/
+*.local
+.vite/
+.eslintcache
+.npm/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Foundry / Solidity build output ─────────────────────────────
 out/
 cache/
 broadcast/
+cache_hardhat/
+artifacts/
+typechain-types/
 
-coverage/
-dist/
-
-
-# local / generated
-.env.*
-!.env.example
-.coverage
+# ── Generated, scratch and tooling output ───────────────────────
 tmp/
 output/
-.DS_Store
+.codex-build/
 *.log
+*.tmp
+*.bak
+*.swp
+Untitled-*.txt
 frontend/Untitled-*.txt
+
+# ── Editors and operating systems ───────────────────────────────
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── Event and slide templates that are not part of the project ──
+*.pptx
