@@ -1,0 +1,26 @@
+{
+  "name": "agent-wallet-contracts",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "concurrently --kill-others --names backend,frontend --prefix-colors blue,green \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "dev:backend": "node scripts/python.mjs -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload",
+    "dev:frontend": "pnpm --filter al-wallet dev",
+    "contracts:compile": "node contracts/scripts/compile.mjs",
+    "contracts:clean": "node contracts/scripts/clean.mjs",
+    "contracts:test": "forge test -vv",
+    "frontend:build": "pnpm --filter al-wallet build",
+    "frontend:test": "pnpm --filter al-wallet test",
+    "backend:test": "node scripts/python.mjs -m pytest backend",
+    "test": "pnpm contracts:test && pnpm frontend:test && pnpm backend:test"
+  },
+  "dependencies": {
+    "@account-abstraction/contracts": "0.8.0",
+    "@openzeppelin/contracts": "5.4.0",
+    "solc": "0.8.28"
+  },
+  "devDependencies": {
+    "@foundry-rs/forge": "1.7.1",
+    "concurrently": "^9.2.1"
+  }
+}

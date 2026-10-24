@@ -1,0 +1,6 @@
+packages:
+  - frontend
+
+allowBuilds:
+  '@foundry-rs/forge': true
+  esbuild: true

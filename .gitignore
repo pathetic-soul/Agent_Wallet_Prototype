@@ -1,0 +1,24 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+node_modules/
+out/
+cache/
+broadcast/
+
+coverage/
+dist/
+
+
+# local / generated
+.env.*
+!.env.example
+.coverage
+tmp/
+output/
+.DS_Store
+*.log
+frontend/Untitled-*.txt

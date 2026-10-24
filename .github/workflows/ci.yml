@@ -1,0 +1,75 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    name: Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check Solidity formatting
+        run: pnpm exec forge fmt --check contracts/src contracts/test
+      - name: Compile contracts
+        run: pnpm contracts:compile
+      - name: Run contract regression suite
+        run: pnpm contracts:test
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build production frontend
+        run: pnpm frontend:build
+      - name: Run frontend regression suite
+        run: pnpm frontend:test
+
+  backend:
+    name: Backend Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install backend
+        run: python -m pip install -e './backend[dev]'
+      - name: Run backend regression suite
+        run: pytest backend --junitxml=backend-test-results.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results-${{ matrix.python-version }}
+          path: backend-test-results.xml
